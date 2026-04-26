@@ -2,11 +2,10 @@ FROM golang:1.26-bookworm AS build
 
 WORKDIR /src
 
-COPY server1port/go.mod server1port/go.sum /src/server1port/
-WORKDIR /src/server1port
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY server1port/ /src/server1port/
+COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /out/server1port .
 
 FROM debian:bookworm-slim

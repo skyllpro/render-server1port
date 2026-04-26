@@ -3,7 +3,7 @@ services:
     name: server1port
     runtime: docker
     plan: free
-    dockerfilePath: ./deploy/render/Dockerfile
+    dockerfilePath: ./Dockerfile
     dockerContext: .
     autoDeployTrigger: commit
     envVars:

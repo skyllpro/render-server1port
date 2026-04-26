@@ -89,6 +89,12 @@ func main() {
 }
 
 func routeRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet && r.URL.Path == "/healthz" {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok"))
+		return
+	}
+
 	if websocket.IsWebSocketUpgrade(r) {
 		switch r.URL.Path {
 		case "/ws":
