@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: server1port
+    runtime: docker
+    plan: free
+    dockerfilePath: ./deploy/render/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: commit
+    envVars:
+      - key: AUTH_KEY
+        sync: false
+      - key: PORT
+        value: "10000"
