@@ -373,10 +373,7 @@ func handleDataWS(w http.ResponseWriter, r *http.Request) {
 func httpProxyHandler(w http.ResponseWriter, r *http.Request) {
 	clientID, ok := checkAuthFromHeaders(r)
 	if !ok {
-		w.Header().Set("Proxy-Authenticate", `Basic realm="P1-Proxy"`)
-		w.Header().Set("Connection", "close")
-		w.WriteHeader(http.StatusProxyAuthRequired)
-		_, _ = w.Write([]byte("Proxy Authentication Required"))
+		http.NotFound(w, r)
 		return
 	}
 

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: water
+    name: watersing
     region: singapore
     runtime: docker
     plan: free
