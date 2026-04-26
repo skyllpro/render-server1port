@@ -1,6 +1,7 @@
 services:
   - type: web
-    name: server1port
+    name: water
+    region: singapore
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
