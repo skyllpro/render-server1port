@@ -89,12 +89,6 @@ func main() {
 }
 
 func routeRequest(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet && r.URL.Path == "/healthz" {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("ok"))
-		return
-	}
-
 	if websocket.IsWebSocketUpgrade(r) {
 		switch r.URL.Path {
 		case "/ws":
@@ -373,6 +367,13 @@ func handleDataWS(w http.ResponseWriter, r *http.Request) {
 func httpProxyHandler(w http.ResponseWriter, r *http.Request) {
 	clientID, ok := checkAuthFromHeaders(r)
 	if !ok {
+		if shouldChallengeProxyAuth(r) {
+			w.Header().Set("Proxy-Authenticate", `Basic realm="P1-Proxy"`)
+			w.Header().Set("Connection", "close")
+			w.WriteHeader(http.StatusProxyAuthRequired)
+			_, _ = w.Write([]byte("Proxy Authentication Required"))
+			return
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -441,6 +442,22 @@ func bridgeTCPWS(tcp net.Conn, ws *websocket.Conn) {
 	go func() { errc <- copyTCPToWS(tcp, ws) }()
 	go func() { errc <- copyWSToTCP(ws, tcp) }()
 	<-errc
+}
+
+func shouldChallengeProxyAuth(r *http.Request) bool {
+	if r.Method == http.MethodConnect {
+		return true
+	}
+	if r.Header.Get("Proxy-Connection") != "" {
+		return true
+	}
+	if r.Header.Get("Proxy-Authorization") != "" {
+		return true
+	}
+	if r.URL != nil && r.URL.Host != "" {
+		return true
+	}
+	return false
 }
 
 func copyTCPToWS(r net.Conn, ws *websocket.Conn) error {
