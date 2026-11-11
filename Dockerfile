@@ -20,4 +20,4 @@ COPY --from=build /out/server1port /app/server1port
 
 EXPOSE 10000
 
-CMD ["/bin/sh", "-c", "exec /app/server1port -ws 0.0.0.0:${PORT:-10000}"]
+CMD ["/bin/sh", "-c", "exec /app/server1port -ws 0.0.0.0:${PORT:-10000} -proxy 127.0.0.1:35000"]
